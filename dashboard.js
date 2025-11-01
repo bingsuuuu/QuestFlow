@@ -993,11 +993,11 @@ function showNotification(htmlContent, type = 'info', duration = 4000) {
 
   // Set a timer to remove the notification
   setTimeout(() => {
-    notification.classList.add('fading-out');
-    // Remove from DOM after fade-out animation
-    notification.addEventListener('transitionend', () => {
-      notification.remove();
-    });
+    notification.classList.add('fading-out'); // Start the fade-out animation
+    // Use a timeout that matches the CSS transition duration to remove the element.
+    // This is more reliable than the 'transitionend' event which can fire multiple times.
+    // The CSS transition is 0.4s, so we'll wait 500ms to be safe.
+    setTimeout(() => notification.remove(), 500);
   }, duration);
 }
 
