@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "QuestFlow",
+  "version": "1.0",
+  "description": "A gamified productivity and study companion with RPG mechanics.",
+  "permissions": [
+    "storage",
+    "scripting",
+    "activeTab"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open QuestFlow"
+  },
+  "icons": {
+    "16": "logo.png",
+    "48": "logo.png",
+    "128": "logo.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "dashboard.html",
+        "dashboard.css",
+        "dashboard.js",
+        "ai.js",
+        "agent.js",
+        "logo.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

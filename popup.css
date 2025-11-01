@@ -1,0 +1,48 @@
+body {
+  width: 280px;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background: #121212;
+  color: #ffffff;
+}
+
+.container {
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 120px;
+}
+
+h1 {
+  margin: 0 0 15px 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #c89b3c; /* Souls-like gold accent */
+  font-family: 'MedievalSharp', cursive; /* Using the title font */
+}
+
+.dashboard-btn {
+  background-color: #c89b3c;
+  color: #121212;
+  border: none;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 4px; /* Sharper corners */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 80%;
+}
+
+.dashboard-btn:hover {
+  background-color: #e6c369;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dashboard-btn:active {
+  transform: translateY(0);
+}

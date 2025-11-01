@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuestFlow Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <!-- Centralized container for all pop-up notifications -->
+  <div id="notification-container"></div>
+
+  <!-- Class Selection Onboarding -->
+  <div id="class-selection-overlay" style="display: none;">
+    <div class="class-selection-container">
+      <img src="logo.png" alt="QuestFlow Logo" class="overlay-logo">
+      <p class="subtitle" style="margin-top:0;">Productivity RPG</p>
+      <div class="name-input-container">
+        <label for="player-name-input">What is your name, adventurer?</label>
+        <input type="text" id="player-name-input" class="text-input" placeholder="Enter your name..." maxlength="20">
+      </div>
+      <h2>Choose Your Flow Archetype</h2>
+      <p class="subtitle">Your archetype determines your strengths.</p>
+      <div class="class-options">
+        <div class="class-card">
+          <h3>🛡️ Architect</h3>
+          <p>A disciplined builder who excels at direct system stabilization.</p>
+          <ul>
+            <li>+5% total stabilization impact on Anomalies.</li>
+            <li>Starts with a <strong>Firewall Breach Script</strong>.</li>
+            <li>Higher chance to gain Discipline on Mind Tier Up.</li>
+          </ul>
+          <button class="action-btn primary" data-class="architect">Choose Architect</button>
+        </div>
+        <div class="class-card">
+          <h3>📚 Analyst</h3>
+          <p>A master of data, turning insight into accelerated growth.</p>
+          <ul>
+            <li>+10% XP from all tasks.</li>
+            <li>Starts with a <strong>Data Packet: Insight</strong>.</li>
+            <li>Higher chance to gain Intelligence on Mind Tier Up.</li>
+          </ul>
+          <button class="action-btn primary" data-class="analyst">Choose Analyst</button>
+        </div>
+        <div class="class-card">
+          <h3>🧘 Ascetic</h3>
+          <p>A focused operative who finds resources through discipline.</p>
+          <ul>
+            <li>+20% bonus to Focus stat gains from Habit tasks & Focus sessions.</li>
+            <li>Starts with a <strong>Small Credit Chip</strong>.</li>
+            <li>Higher chance to gain Focus on Mind Tier Up.</li>
+          </ul>
+          <button class="action-btn primary" data-class="ascetic">Choose Ascetic</button>
+        </div>
+        <div class="class-card">
+          <h3>🧑‍🎓 Synthesist</h3>
+          <p>A jack-of-all-trades, adaptable and resourceful.</p>
+          <ul>
+            <li>+5% chance to find an item from tasks.</li>
+            <li>Starts with an <strong>Encrypted Cache</strong>.</li>
+            <li>Equal chance to gain any stat on level up.</li>
+          </ul>
+          <button class="action-btn primary" data-class="synthesist">Choose Synthesist</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- NEW: Top Bar -->
+    <header class="top-bar">
+      <div class="logo-container">
+        <img src="logo.png" alt="QuestFlow Logo" class="top-bar-logo">
+        <span class="app-name">QuestFlow</span>
+      </div>
+      <button id="pomodoroBtn" class="action-btn secondary">⏱️ Focus</button>
+    </header>
+
+    <!-- Pomodoro panel moved to be toggled by the top bar button -->
+    <div id="pomodoro-panel" class="panel" style="display: none; margin-bottom:16px;">
+      <div class="panel-header">
+        <h3>⏱️ Focus Session</h3>
+        <div id="pomodoro-timer" class="timer-display">25:00</div>
+      </div>
+      <div id="pomodoro-quest-display" class="pomodoro-quest-text"></div>
+      <div class="pomodoro-controls">
+        <button id="pomodoro-start" class="action-btn primary" style="width:auto; padding:8px 12px;">Start Flow</button>
+        <button id="pomodoro-pause" class="action-btn tertiary" style="width:auto; padding:8px 12px;">Pause</button>
+        <button id="pomodoro-reset" class="action-btn secondary" style="width:auto; padding:8px 12px;">Reset</button>
+      </div>
+      <div class="pomodoro-footer">
+        <div id="pomodoro-status" class="small-text">Work session</div>
+        <div id="focus-minutes" class="small-text">Total Focus: 0m</div>
+        <div id="pomodoro-session-count" class="small-text">Session: 0/4</div>
+      </div>
+    </div>
+
+    <!-- NEW: AI Motivation Section -->
+    <section id="motivation-section" class="panel">
+      <div id="player-greeting" style="display: none;"></div>
+      <p id="ai-motivation-quote" class="ai-quote"></p>
+    </section>
+
+    <!-- Stats Panel -->
+    <section class="stats-panel">
+      <div class="xp-ring-container">
+        <div id="xp-ring" class="xp-ring">
+          <span id="level">1</span>
+          <span class="xp-ring-label">Mind Tier</span>
+        </div>
+      </div>
+      <div class="primary-stats">
+        <div class="stat-item primary">
+          <span class="stat-label">XP</span>
+          <span class="stat-value large" id="xp">0</span>
+        </div>
+        <div class="stat-item primary">
+          <span class="stat-label">Credit</span>
+          <span class="stat-value large" id="credit">0</span>
+        </div>
+        <div class="stat-item primary streak-container">
+          <span class="stat-label">🔥 Streak</span>
+          <span class="stat-value large" id="streak">0</span>
+        </div>
+      </div>
+      <div id="core-stats-container" class="core-stats">
+        <div class="stat-item"><span class="stat-label">💪 DIS</span><span class="stat-value" id="discipline">5</span></div>
+        <div class="stat-item"><span class="stat-label">🧠 INT</span><span class="stat-value" id="intelligence">5</span></div>
+        <div class="stat-item"><span class="stat-label">🎯 FOC</span><span class="stat-value" id="focus">5</span></div>
+      </div>
+      <div id="class-display" class="class-display-area" style="display: none;"></div>
+    </section>
+
+    <!-- AI Agent Panel -->
+    <section id="agent-panel" class="panel">
+      <h3>✨ Flow Schedule</h3>
+      <div id="campaign-list" class="task-list"></div>
+    </section>
+    <!-- /AI Agent Panel -->
+
+    <!-- Task Manager -->
+    <section id="task-manager">
+      <div class="view-toggle">
+        <button id="toggle-quests-view" class="view-toggle-btn active">Quests</button>
+        <button id="toggle-dailies-view" class="view-toggle-btn">Daily Habits</button>
+      </div>
+
+      <div id="quest-view">
+        <h3>📜 Quest Board</h3>
+        <div class="task-input-section">
+          <div class="task-input-wrapper">
+            <input type="text" id="taskInput" placeholder="Enter your quest..." class="task-input">
+            <div class="task-meta-inputs">
+              <input type="text" id="taskDuration" class="task-sub-input" placeholder="Duration (e.g., 30m)" title="Estimated duration">
+              <input type="date" id="taskDeadline" class="task-sub-input" title="Deadline">
+            </div>
+          </div>
+          <button id="addTaskSubmit" class="action-btn primary" style="flex-shrink: 0;">Add Quest</button>
+        </div>
+        <div id="taskList" class="task-list"></div>
+      </div>
+
+      <div id="daily-ritual-view" style="display: none;">
+        <h3>📅 Daily Habits</h3>
+        <div class="task-input-section">
+          <input type="text" id="dailyQuestInput" placeholder="Enter a new daily habit..." class="task-input" style="margin: 0;">
+          <button id="addDailyQuestSubmit" class="action-btn primary" style="flex-shrink: 0;">Add Habit</button>
+        </div>
+        <div id="dailyQuestList" class="task-list"></div>
+      </div>
+    </section>
+
+    <!-- Boss Panel -->
+    <section class="boss-panel">
+      <div class="boss-art-container">
+        <div id="bossArt" class="boss-art-placeholder"></div>
+      </div>
+      <div class="boss-header">
+        <div class="boss-info">
+          <span class="boss-name" id="bossName">Entropy Node</span>
+          <span class="boss-level">Lv.<span id="bossLevel">1</span></span>
+        </div>
+      </div>
+      <div class="boss-hp-container">
+        <div class="boss-hp-label">
+          <span id="bossHp">100</span> / <span id="bossMaxHp">100</span> HP
+        </div>
+        <div class="boss-hp-bar">
+          <div class="boss-hp-fill" id="bossHpFill" style="width: 100%"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Remaining Actions -->
+    <section class="actions">
+      <button id="studyToolsBtn" class="action-btn secondary">📚 Study Tools</button>
+      <button id="inventoryBtn" class="action-btn secondary">🎒 Inventory</button>
+      <button id="notesBtn" class="action-btn secondary">📜 My Notes</button>
+      <button id="settingsBtn" class="action-btn tertiary" style="grid-column: 1 / -1;">⚙️ Settings</button>
+    </section>
+
+    <!-- Pomodoro panel inserted here -->
+    <!-- Study Tools Panel -->
+    <div id="study-tools-panel" class="panel" style="display: none; margin-bottom: 16px;">
+      <h3 style="margin:0 0 12px 0;">📚 Study Tools</h3>
+      
+      <!-- Summarizer Tool -->
+      <div class="tool-section">
+        <h4>📝 Text Summarizer</h4>
+        <p class="small-text" style="margin-bottom: 8px;">Paste text below to get a concise summary from the AI.</p>
+        <textarea id="summarizer-input" class="text-input" placeholder="Enter text to summarize..." rows="6"></textarea>
+        <div style="margin-top: 8px; display: flex; gap: 8px;">
+          <button id="summarize-btn" class="action-btn primary">Summarize</button>
+          <button id="clear-summarizer-btn" class="action-btn tertiary">Clear</button>
+        </div>
+        <div id="summarizer-output-container" style="margin-top: 12px; display: none;">
+          <h5 style="margin-bottom: 4px;">Summary:</h5>
+          <div id="summarizer-output" class="output-box"></div>
+          <div id="summarizer-actions" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <!-- Quiz Generator Tool -->
+      <div class="tool-section">
+        <h4>🧠 Quiz Generator</h4>
+        <p class="small-text" style="margin-bottom: 8px;">Use the text above to generate a short quiz to test your knowledge.</p>
+        <button id="generate-quiz-btn" class="action-btn primary">Generate Quiz</button>
+        <div id="quiz-output-container" style="margin-top: 12px; display: none;">
+          <div id="quiz-content"></div>
+          <div id="quiz-actions" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <!-- Grammar Checker Tool -->
+      <div class="tool-section">
+        <h4>✍️ Grammar Checker</h4>
+        <p class="small-text" style="margin-bottom: 8px;">Use the text above to check for grammar and spelling errors.</p>
+        <button id="check-grammar-btn" class="action-btn primary">Check Grammar</button>
+        <div id="grammar-output-container" style="margin-top: 12px; display: none;">
+          <div id="grammar-actions" style="margin-top: 8px;"></div>
+        </div>
+      </div>
+    </div>
+    <!-- /Study Tools Panel -->
+    <!-- Inventory Panel -->
+    <div id="inventory-panel" class="panel" style="display: none; margin-bottom: 16px;">
+      <h3 style="margin:0 0 12px 0;">🎒 Inventory</h3>
+
+      <div class="tool-section">
+        <h4>Active Effects</h4>
+        <div id="active-effects-list" class="output-box"></div>
+      </div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <h4>Digital Artifacts</h4>
+      <div id="inventory-list"></div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <div class="tool-section">
+        <h4>🛒 Merchant's Shop</h4>
+        <div id="shop-list"></div>
+      </div>
+    </div>
+    <!-- Settings Panel -->
+    <div id="settings-panel" class="panel" style="display: none; margin-bottom: 16px;">
+      <h3 style="margin:0 0 12px 0;">⚙️ Settings</h3>
+
+      <div class="tool-section">
+        <h4>Theme</h4>
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="theme-switch">
+                <input type="checkbox" id="theme-switch" />
+                <span class="slider round"></span>
+            </label>
+            <span id="theme-label" class="small-text">Dark Mode</span>
+        </div>
+      </div>
+      <hr class="tool-divider" style="margin: 20px 0;">
+      
+      <div class="tool-section">
+        <h4>Change Class</h4>
+        <p class="small-text">Return to the class selection screen. Your level, stats, and items will be kept.</p>
+        <button id="changeClassBtn" class="action-btn secondary">Change Class</button>
+      </div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <div class="tool-section">
+        <h4>Focus Hours</h4>
+        <p class="small-text">The Flow Assistant will only plan your schedule during these hours. Set your start and end times for work or study.</p>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+          <input type="time" id="focusStartInput" class="task-sub-input" style="width: auto;">
+          <span>to</span>
+          <input type="time" id="focusEndInput" class="task-sub-input" style="width: auto;">
+          <button id="saveFocusHoursBtn" class="action-btn primary small-btn" style="margin-left: auto;">Save</button>
+        </div>
+      </div>
+
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <div class="tool-section">
+        <h4>Focus Analysis</h4>
+        <p class="small-text">Your most productive times of day, based on completed focus sessions.</p>
+        <div id="focus-analysis-chart" class="focus-chart">
+          <div class="chart-bar-group">
+            <div class="chart-bar-fill" id="morning-bar" style="height: 0%;"></div>
+            <div class="chart-bar-label">Morning</div>
+            <div class="chart-bar-value" id="morning-value">0m</div>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-bar-fill" id="afternoon-bar" style="height: 0%;"></div>
+            <div class="chart-bar-label">Afternoon</div>
+            <div class="chart-bar-value" id="afternoon-value">0m</div>
+          </div>
+          <div class="chart-bar-group">
+            <div class="chart-bar-fill" id="evening-bar" style="height: 0%;"></div>
+            <div class="chart-bar-label">Evening</div>
+            <div class="chart-bar-value" id="evening-value">0m</div>
+          </div>
+        </div>
+      </div>
+      <hr class="tool-divider" style="margin: 20px 0;">
+
+      <div class="tool-section">
+        <h4>Pomodoro Settings</h4>
+        <p class="small-text">Customize your focus and break intervals.</p>
+        <div class="pomodoro-settings-grid">
+          <label for="pomodoroWorkDuration">Work</label>
+          <input type="number" id="pomodoroWorkDuration" class="task-sub-input" min="1">
+          <label for="pomodoroShortBreak">Short Break</label>
+          <input type="number" id="pomodoroShortBreak" class="task-sub-input" min="1">
+          <label for="pomodoroLongBreak">Long Break</label>
+          <input type="number" id="pomodoroLongBreak" class="task-sub-input" min="1">
+          <label for="pomodoroSessions">Sessions</label>
+          <input type="number" id="pomodoroSessions" class="task-sub-input" min="1">
+        </div>
+        <button id="savePomodoroSettingsBtn" class="action-btn primary" style="margin-top: 12px; width: 100%;">Save Pomodoro Settings</button>
+      </div>
+
+      <div class="tool-section">
+        <h4>Reset Progress</h4>
+        <p class="small-text">Warning: This will reset all your progress, including level, stats, and items. This cannot be undone.</p>
+        <button id="resetProgressBtn" class="action-btn accent-red-btn">Reset All Progress</button>
+      </div>
+    </div>
+    <!-- My Notes Panel -->
+    <div id="notes-panel" class="panel" style="display: none; margin-bottom: 16px;">
+      <h3>📜 My Notes</h3>
+      <div class="tool-section">
+        <h4>📝 Summaries</h4>
+        <div id="saved-summaries-list"></div>
+      </div>
+      <hr class="tool-divider">
+      <h4>🧠 Quizzes</h4>
+      <div id="saved-quizzes-list"></div>
+      <hr class="tool-divider">
+      <h4>✍️ Corrections</h4>
+      <div id="saved-corrections-list"></div>
+    </div>
+
+    <!-- NEW: Floating AI Companion Bubble -->
+    <div id="ai-companion-bubble" class="idle">
+      <div class="bubble-glow"></div>
+      <div class="bubble-icon">
+        <div class="ai-core"></div>
+      </div>
+    </div>
+
+    <!-- NEW: AI Chat Side Panel -->
+    <div id="ai-chat-panel" class="ai-chat-panel">
+      <div class="chat-panel-header">
+        <h3>💬 Flow Assistant</h3>
+        <button id="close-chat-panel-btn" class="delete-btn" style="background:transparent; color: var(--text-light); border:none;">×</button>
+      </div>
+      <div id="chat-log" class="chat-log">
+        <!-- Messages will be appended here -->
+      </div>
+      <div id="chat-suggestions" class="chat-suggestions">
+        <!-- Suggestion buttons will be appended here -->
+      </div>
+      <div class="chat-input-section">
+        <input type="text" id="chat-input" placeholder="Ask the Assistant..." class="task-input" style="margin: 0;">
+        <button id="chat-send-btn" class="action-btn primary">Send</button>
+      </div>
+    </div>
+
+    <!-- NEW: Stats Radar Chart Modal -->
+    <div id="stats-modal-overlay" class="modal-overlay" style="display: none;">
+      <div class="modal-content panel">
+        <div class="panel-header">
+          <h3>Core Stats Analysis</h3>
+          <button id="close-stats-modal-btn" class="delete-btn" style="background:transparent; color: var(--text-light); border:none;">×</button>
+        </div>
+        <div class="radar-chart-container">
+          <canvas id="radar-chart" width="300" height="300"></canvas>
+        </div>
+        <p class="small-text" style="text-align: center; margin-top: 16px;">
+          A visual representation of your operative's core abilities.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="ai.js"></script>
+  <script src="agent.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
