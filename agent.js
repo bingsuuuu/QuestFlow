@@ -95,16 +95,18 @@ const QuestFlowAgent = {
     // We must also save this cleaned list back to storage for future runs.
     getPlayerData().then(data => { data.agent.blockoutPeriods = activeBlockouts; savePlayerData(data); });
 
+    const focusStart = agentMemory.focusStart || '09:00';
+    const focusEnd = agentMemory.focusEnd || '17:00';
 
     // Check if it's currently outside of focus hours
-    if (this.isOutsideFocusHours(agentMemory.focusStart, agentMemory.focusEnd)) {
+    if (this.isOutsideFocusHours(focusStart, focusEnd)) {
       console.log("Flow Assistant (Planner): Outside of focus hours. Recommending rest.");
       return { isRestTime: true, campaign: [] };
     }
 
     // --- Time Allocation Logic ---
     const now = new Date();
-    const end = this.parseTimeString(agentMemory.focusEnd);
+    const end = this.parseTimeString(focusEnd);
     let availableMinutes = (end - now) / (1000 * 60);
 
     // If focus time has already passed for today
@@ -824,4 +826,5 @@ const QuestFlowAgent = {
     chatLog.appendChild(messageEl);
     chatLog.scrollTop = chatLog.scrollHeight; // Auto-scroll to the bottom
   }
+
 };
